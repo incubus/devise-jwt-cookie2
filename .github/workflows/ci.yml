@@ -1,0 +1,45 @@
+name: Lint and Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ['2.7', '3.0', '3.1', '3.2']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run Spec
+        run: bundle exec rake spec
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout Repository
+
+      - uses: ruby/setup-ruby@v1
+        name: Setup Ruby
+        with:
+          ruby-version: 3.2
+          bundler-cache: true
+
+      - name: Rubocop
+        uses: reviewdog/action-rubocop@v2
+        with:
+          skip_install: true
+          use_bundler: true
+          rubocop_version: gemfile
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_level: error

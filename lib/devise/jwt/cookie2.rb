@@ -1,5 +1,9 @@
+# frozen_string_literal: true
+
 require 'dry/configurable'
 require 'dry/auto_inject'
+require 'devise'
+require 'devise/jwt'
 require 'devise/jwt/cookie/strategy'
 
 # Authentication library
@@ -11,11 +15,14 @@ module Devise
   add_module(:jwt_cookie_authenticatable, strategy: :jwt_cookie)
 
   module JWT
+    # Devise extension for adding cookie support on top of devise-jwt
     module Cookie
       extend Dry::Configurable
 
-      setting :name, 'access_token'
-      setting :secure, true
+      setting :name, default: 'access_token'
+      setting :secure, default: true
+      setting :httponly, default: true
+      setting :same_site, default: :none
       setting :domain
 
       Import = Dry::AutoInject(config)

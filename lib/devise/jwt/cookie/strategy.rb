@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'warden'
 
 module Devise
@@ -15,12 +17,11 @@ module Devise
         end
 
         def authenticate!
-          # FIXME support aud
-          aud = nil
+          aud = Warden::JWTAuth::EnvHelper.aud_header(env)
           user = Warden::JWTAuth::UserDecoder.new.call(token, scope, aud)
           success!(user)
-        rescue ::JWT::DecodeError => exception
-          fail!(exception.message)
+        rescue ::JWT::DecodeError => e
+          fail!(e.message)
         end
 
         private
