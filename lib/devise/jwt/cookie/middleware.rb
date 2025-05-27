@@ -20,7 +20,7 @@ module Devise
             # add the Authorization header, devise-jwt needs this to revoke tokens
             # we need to make sure this is done before the other middleware is run
             request = ActionDispatch::Request.new(env)
-            env['HTTP_AUTHORIZATION'] = "Bearer #{CookieHelper.new.read_from(request.cookies)}"
+            env['HTTP_AUTHORIZATION'] ||= "Bearer #{CookieHelper.new.read_from(request.cookies)}"
           end
 
           status, headers, response = app.call(env)
