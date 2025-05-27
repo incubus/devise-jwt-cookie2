@@ -42,15 +42,14 @@ module Devise
         end
 
         def global_options
-          res = {
+          @global_options ||= {
             path: '/',
             httponly: httponly,
             secure: secure,
             same_site: same_site
-          }
-          res[:domain] = domain if domain.present?
-
-          res
+          }.tap do |res|
+            res[:domain] = domain if domain.present?
+          end
         end
       end
     end
